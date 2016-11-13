@@ -59,6 +59,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Net.Http">
@@ -71,6 +72,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheObject.cs" />
+    <Compile Include="CacheService.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="FakeDbContext.cs" />
@@ -79,6 +82,7 @@
     <Compile Include="QueryFluent.cs" />
     <Compile Include="QueryObject.cs" />
     <Compile Include="Repository.cs" />
+    <Compile Include="SelectorClause.cs" />
     <Compile Include="StateHelper.cs" />
     <Compile Include="UnitOfWork.cs" />
   </ItemGroup>

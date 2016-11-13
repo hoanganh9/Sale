@@ -1,0 +1,1003 @@
+﻿<#@ template language="C#" debug="true" hostspecific="true"#>
+<#@ include file="EF6.Utility.CS.ttinclude"#>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ output extension=".cs"#>
+<#
+const string inputFile = @"../SaleSeafoodEnities.edmx";
+const string nameSpace = "";
+List<string> lstIngore = new List<string>(){"CreateDate","CreateBy","Id","ModifyDate","ModifyBy","Status","status"};
+//Danh sach khong Generate
+//Note: danh sach phai là chư thường (ctrl + u u)
+List<string> lstObjectIngore = new List<string>(){
+		"___","___","___"};
+//Danh sach Generate lai
+//Note: danh sach phai là chư thường (ctrl + u u)
+List<string> lstObjectReGenerate = new List<string>(){
+		"__","__","__","__","__"};
+//Danh sach khong ReGenerate
+//Note: danh sach phai là chư thường (ctrl + u u)
+List<string> lstObjectNotReGenerate = new List<string>(){
+		"__","__","__","__","__"};
+const bool reGenerate = true;
+var textTransform = DynamicTextTransformation.Create(this);
+var code = new CodeGenerationTools(this);
+var ef = new MetadataTools(this);
+var typeMapper = new TypeMapper(code, ef, textTransform.Errors);
+var	fileManager = EntityFrameworkTemplateFileManager.Create(this);
+var itemCollection = new EdmMetadataLoader(textTransform.Host, textTransform.Errors).CreateEdmItemCollection(inputFile);
+var codeStringGenerator = new CodeStringGenerator(code, typeMapper, ef, lstIngore);
+
+if (!typeMapper.VerifyCaseInsensitiveTypeUniqueness(typeMapper.GetAllGlobalItems(itemCollection), inputFile))
+{
+    return string.Empty;
+}
+
+//WriteHeader(codeStringGenerator, fileManager);#>
+<#foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection))
+{;
+	if(ContainList(lstObjectIngore,entity.Name))
+		continue;
+	if((reGenerate && !ContainList(lstObjectNotReGenerate,entity.Name)) || !DoesFileExist(entity.Name + "Model.cs") || ContainList(lstObjectReGenerate,entity.Name))
+	{
+    fileManager.StartNewFile(entity.Name + "Model.cs");
+    BeginNamespace(code, nameSpace);
+#>
+<#=codeStringGenerator.UsingDirectives(inHeader: false)#>
+using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using Base.Common;
+using Base.Lib;
+using Repository.Pattern.Infrastructure;
+using Newtonsoft.Json;
+
+// created : <#= DateTime.Now.ToString("dd/MM/yyyy") #>
+// Author : Generate by Anhhn
+<#=codeStringGenerator.EntityClassOpening(entity)#>Model : EntityModel<<#=code.Escape(entity)#>>
+{
+<#
+    var propertiesWithDefaultValues = typeMapper.GetPropertiesWithDefaultValues(entity);
+    var collectionNavigationProperties = typeMapper.GetCollectionNavigationProperties(entity);
+    var complexProperties = typeMapper.GetComplexProperties(entity);
+    var simpleProperties = typeMapper.GetSimpleProperties(entity);
+#>
+	public <#=code.Escape(entity)#>Model()
+    {
+		_entity = new <#=code.Escape(entity)#>();
+	}
+
+	public <#=code.Escape(entity)#>Model(<#=code.Escape(entity)#> entity) : base(entity)
+    {
+    }
+	
+	//TODO: <#=code.Escape(entity)#>-Model
+<#
+    if (simpleProperties.Any())
+    {
+        foreach (var edmProperty in simpleProperties)
+        {
+#>
+	
+	<#=codeStringGenerator.Property(edmProperty, true)#>
+	<#
+        }
+    }
+
+    if (complexProperties.Any())
+    {
+#>
+
+<#
+        foreach(var complexProperty in complexProperties)
+        {
+#>
+    <#=codeStringGenerator.Property(complexProperty)#>
+<#
+        }
+    }
+
+    var navigationProperties = typeMapper.GetNavigationProperties(entity);
+    if (navigationProperties.Any())
+    {
+#>
+
+<#
+        foreach (var navigationProperty in navigationProperties)
+        {
+			if (navigationProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+            {
+#>
+	[JsonIgnore]
+<#
+			}
+#>
+    <#=codeStringGenerator.NavigationProperty(navigationProperty)#>
+<#
+        }
+    }
+#>
+
+	#region base
+
+	public <#=code.Escape(entity)#> toCreate()
+	{
+		//if(string.IsNullOrEmpty(_entity.Id))
+		//	_entity.Id = Guid.NewGuid().ToString();
+		
+		//_entity.Status = (int)Enums.StatusBase.Active;
+		//_entity.CreateDate = this.DateChanged;
+		//_entity.CreateBy = this.UserId;
+		return _entity;
+	}
+
+	public void changeEdit(<#=code.Escape(entity)#> entityOld)
+	{
+		<#if (simpleProperties.Any())
+		{
+			foreach (var edmProperty in simpleProperties)
+			{
+				if(!lstIngore.Any(a=>a.Equals(code.Escape(edmProperty))))
+                {
+			#>
+entityOld.<#=code.Escape(edmProperty)#> = _entity.<#=code.Escape(edmProperty)#>;
+		<#
+                }
+			}
+		}#>
+
+		//entityOld.ModifyDate = this.DateChanged;
+		//entityOld.ModifyBy = this.UserId;
+	}
+	#endregion base
+}
+<#=codeStringGenerator.EntityClassOpening(entity)#>ModelSearch : ModelSearch
+{
+    public <#=code.Escape(entity)#>ModelSearch() : base()
+    {
+    }
+}
+<#
+    EndNamespace(code);
+	}
+	else
+	{
+		fileManager.StartNewFile(entity.Name + "Model.cs");
+		this.Write(OutputFile(entity.Name + "Model.cs"));
+	}
+}
+fileManager.Process();
+#>
+<#+
+
+public bool DoesFileExist(string filename)
+{			
+	return File.Exists(Path.Combine(GetCurrentDirectory(),filename));	
+}
+
+bool ContainList(List<string> lst, string entityName)
+{			
+	return lst.Any(a=>a.Equals(entityName.ToLower()));
+}
+
+public string OutputFile(string filename)
+{
+	using(StreamReader sr = new StreamReader(Path.Combine(GetCurrentDirectory(),filename)))
+	{
+		string contents = sr.ReadToEnd();
+		return contents;
+	}
+}
+
+public string GetCurrentDirectory()
+{
+	string executingDirectoryName = "";
+	string stackTraceFileName = new StackTrace(true).GetFrame(0).GetFileName();
+	if (String.IsNullOrEmpty(stackTraceFileName))
+	{
+		throw new ArgumentException("No value was specified for the 'directoryName' configuration parameter" +
+			", and we could not figure out the file name from the stack trace (most likely because of running " +
+			"the template with debug='False' specified in the <\u0023@ template \u0023> directive.");
+	}
+	else
+	{		
+		executingDirectoryName = Path.GetDirectoryName(stackTraceFileName);
+	}	
+	return executingDirectoryName;
+}
+#>
+<#+
+public void WriteHeader(CodeStringGenerator codeStringGenerator, EntityFrameworkTemplateFileManager fileManager)
+{
+    fileManager.StartHeader();
+#>
+//------------------------------------------------------------------------------
+// <auto-generated>
+// <#=CodeGenerationTools.GetResourceString("Template_GeneratedCodeCommentLine1")#>
+//
+// <#=CodeGenerationTools.GetResourceString("Template_GeneratedCodeCommentLine2")#>
+// <#=CodeGenerationTools.GetResourceString("Template_GeneratedCodeCommentLine3")#>
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+<#=codeStringGenerator.UsingDirectives(inHeader: true)#>
+<#+
+    fileManager.EndBlock();
+}
+
+public void BeginNamespace(CodeGenerationTools code, string nameSpace)
+{
+    var codeNamespace = code.VsNamespaceSuggestion();
+    if (!String.IsNullOrEmpty(codeNamespace))
+    {
+#>
+namespace <#=code.EscapeNamespace(codeNamespace)+nameSpace#>
+{
+<#+
+        PushIndent("    ");
+    }
+}
+
+public void EndNamespace(CodeGenerationTools code)
+{
+    if (!String.IsNullOrEmpty(code.VsNamespaceSuggestion()))
+    {
+        PopIndent();
+#>
+}<#+
+    }
+}
+
+public const string TemplateId = "CSharp_DbContext_Types_EF6";
+
+public class CodeStringGenerator
+{
+    private readonly CodeGenerationTools _code;
+    private readonly TypeMapper _typeMapper;
+    private readonly MetadataTools _ef;
+
+	public List<string> _lstIngore;
+    public CodeStringGenerator(CodeGenerationTools code, TypeMapper typeMapper, MetadataTools ef, List<string> lstIngore)
+    {
+        ArgumentNotNull(code, "code");
+        ArgumentNotNull(typeMapper, "typeMapper");
+        ArgumentNotNull(ef, "ef");
+
+        _code = code;
+        _typeMapper = typeMapper;
+        _ef = ef;
+		_lstIngore = lstIngore;
+    }
+
+    public string Property(EdmProperty edmProperty, bool isRequired = false)
+    {
+		string strformat = "{0} {1} {2}"
+				+ Environment.NewLine + "	{{"
+				+ Environment.NewLine + "		{3}get{{ return _entity.{2}; }}"
+				+ Environment.NewLine + "		{4}set{{ _entity.{2} = value; }}"
+				+ Environment.NewLine + "	}}";
+		string result = string.Format(
+            CultureInfo.InvariantCulture,
+            strformat,
+            Accessibility.ForProperty(edmProperty),
+            _typeMapper.GetTypeName(edmProperty.TypeUsage),
+            _code.Escape(edmProperty),
+            _code.SpaceAfter(Accessibility.ForGetter(edmProperty)),
+            _code.SpaceAfter(Accessibility.ForSetter(edmProperty)));
+		string metadata = string.Format(
+			CultureInfo.InvariantCulture,
+            "[Display(Name = \"{0}\")]",
+            _code.Escape(edmProperty)) + Environment.NewLine;
+
+		//Required
+		if(isRequired && !_typeMapper.IsNullable(edmProperty.TypeUsage) && !_lstIngore.Any(a=>a.Equals(_code.Escape(edmProperty))))
+        {
+			metadata += "	[Required(ErrorMessage = Enums.ErrorMessage.Required)]" + Environment.NewLine;
+        }
+		if(edmProperty.TypeUsage.EdmType.Name == "String" && edmProperty.TypeUsage.Facets["MaxLength"].Value.ToString() != "Max" && !_lstIngore.Any(a=>a.Equals(_code.Escape(edmProperty))))
+        {
+			metadata += string.Format(
+			CultureInfo.InvariantCulture,
+            "	[StringLength({0}, ErrorMessage = Enums.ErrorMessage.StringLengthMax)]",
+            edmProperty.TypeUsage.Facets["MaxLength"].Value) + Environment.NewLine;
+        }
+		string typeName = "";
+		if(!_lstIngore.Any(a=>a.Equals(_code.Escape(edmProperty))))
+        {
+			typeName = _typeMapper.GetCustomType(edmProperty.TypeUsage, _code.Escape(edmProperty), isRequired);
+			metadata +=	_typeMapper.GetCustomMeta(edmProperty.TypeUsage, _code.Escape(edmProperty));
+        }
+		
+		return metadata + "	" + result + typeName + Environment.NewLine;;
+    }
+	
+    public string NavigationProperty(NavigationProperty navProp)
+    {
+		string strformat = "";
+        var endType = _typeMapper.GetTypeName(navProp.ToEndMember.GetEntityType());
+		if(navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+        {
+			strformat = "{0} {1} {2}"
+				+ Environment.NewLine + "	{{"
+				+ Environment.NewLine + "		{3}get{{ return _entity.{2} != null?_entity.{2}.ToList() : new {1}(); }}"
+				+ Environment.NewLine + "		{4}set{{ _entity.{2} = value; }}"
+				+ Environment.NewLine + "	}}";
+        }
+		else
+        {
+			strformat = "{0} {1} {2}"
+				+ Environment.NewLine + "	{{"
+				+ Environment.NewLine + "		{3}get{{ return _entity.{2}; }}"
+				+ Environment.NewLine + "		{4}set{{ _entity.{2} = value; }}"
+				+ Environment.NewLine + "	}}";
+        }
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            strformat,
+            AccessibilityAndVirtual(Accessibility.ForNavigationProperty(navProp)),
+            navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many ? ("List<" + endType + ">") : endType,
+            _code.Escape(navProp),
+            _code.SpaceAfter(Accessibility.ForGetter(navProp)),
+            _code.SpaceAfter(Accessibility.ForSetter(navProp)));
+    }
+    
+    public string AccessibilityAndVirtual(string accessibility)
+    {
+        return accessibility + (accessibility != "private" ? " virtual" : "");
+    }
+    
+    public string EntityClassOpening(EntityType entity)
+    {
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0} {1}partial class {2}{3}",
+            Accessibility.ForType(entity),
+            _code.SpaceAfter(_code.AbstractOption(entity)),
+            _code.Escape(entity),
+            _code.StringBefore(" : ", _typeMapper.GetTypeName(entity.BaseType)));
+    }
+    
+    public string EnumOpening(SimpleType enumType)
+    {
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0} enum {1} : {2}",
+            Accessibility.ForType(enumType),
+            _code.Escape(enumType),
+            _code.Escape(_typeMapper.UnderlyingClrType(enumType)));
+        }
+    
+    public void WriteFunctionParameters(EdmFunction edmFunction, Action<string, string, string, string> writeParameter)
+    {
+        var parameters = FunctionImportParameter.Create(edmFunction.Parameters, _code, _ef);
+        foreach (var parameter in parameters.Where(p => p.NeedsLocalVariable))
+        {
+            var isNotNull = parameter.IsNullableOfT ? parameter.FunctionParameterName + ".HasValue" : parameter.FunctionParameterName + " != null";
+            var notNullInit = "new ObjectParameter(\"" + parameter.EsqlParameterName + "\", " + parameter.FunctionParameterName + ")";
+            var nullInit = "new ObjectParameter(\"" + parameter.EsqlParameterName + "\", typeof(" + TypeMapper.FixNamespaces(parameter.RawClrTypeName) + "))";
+            writeParameter(parameter.LocalVariableName, isNotNull, notNullInit, nullInit);
+        }
+    }
+    
+    public string ComposableFunctionMethod(EdmFunction edmFunction, string modelNamespace)
+    {
+        var parameters = _typeMapper.GetParameters(edmFunction);
+        
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0} IQueryable<{1}> {2}({3})",
+            AccessibilityAndVirtual(Accessibility.ForMethod(edmFunction)),
+            _typeMapper.GetTypeName(_typeMapper.GetReturnType(edmFunction), modelNamespace),
+            _code.Escape(edmFunction),
+            string.Join(", ", parameters.Select(p => TypeMapper.FixNamespaces(p.FunctionParameterType) + " " + p.FunctionParameterName).ToArray()));
+    }
+    
+    public string ComposableCreateQuery(EdmFunction edmFunction, string modelNamespace)
+    {
+        var parameters = _typeMapper.GetParameters(edmFunction);
+        
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<{0}>(\"[{1}].[{2}]({3})\"{4});",
+            _typeMapper.GetTypeName(_typeMapper.GetReturnType(edmFunction), modelNamespace),
+            edmFunction.NamespaceName,
+            edmFunction.Name,
+            string.Join(", ", parameters.Select(p => "@" + p.EsqlParameterName).ToArray()),
+            _code.StringBefore(", ", string.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray())));
+    }
+    
+    public string FunctionMethod(EdmFunction edmFunction, string modelNamespace, bool includeMergeOption)
+    {
+        var parameters = _typeMapper.GetParameters(edmFunction);
+        var returnType = _typeMapper.GetReturnType(edmFunction);
+
+        var paramList = String.Join(", ", parameters.Select(p => TypeMapper.FixNamespaces(p.FunctionParameterType) + " " + p.FunctionParameterName).ToArray());
+        if (includeMergeOption)
+        {
+            paramList = _code.StringAfter(paramList, ", ") + "MergeOption mergeOption";
+        }
+
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0} {1} {2}({3})",
+            AccessibilityAndVirtual(Accessibility.ForMethod(edmFunction)),
+            returnType == null ? "int" : "ObjectResult<" + _typeMapper.GetTypeName(returnType, modelNamespace) + ">",
+            _code.Escape(edmFunction),
+            paramList);
+    }
+    
+    public string ExecuteFunction(EdmFunction edmFunction, string modelNamespace, bool includeMergeOption)
+    {
+        var parameters = _typeMapper.GetParameters(edmFunction);
+        var returnType = _typeMapper.GetReturnType(edmFunction);
+
+        var callParams = _code.StringBefore(", ", String.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray()));
+        if (includeMergeOption)
+        {
+            callParams = ", mergeOption" + callParams;
+        }
+        
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction{0}(\"{1}\"{2});",
+            returnType == null ? "" : "<" + _typeMapper.GetTypeName(returnType, modelNamespace) + ">",
+            edmFunction.Name,
+            callParams);
+    }
+    
+    public string DbSet(EntitySet entitySet)
+    {
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "{0} virtual DbSet<{1}> {2} {{ get; set; }}",
+            Accessibility.ForReadOnlyProperty(entitySet),
+            _typeMapper.GetTypeName(entitySet.ElementType),
+            _code.Escape(entitySet));
+    }
+
+    public string UsingDirectives(bool inHeader, bool includeCollections = true)
+    {
+        return inHeader == string.IsNullOrEmpty(_code.VsNamespaceSuggestion())
+            ? string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}using System;{1}" +
+                "{2}",
+                inHeader ? Environment.NewLine : "",
+                includeCollections ? (Environment.NewLine + "using System.Collections.Generic;") : "",
+                inHeader ? "" : Environment.NewLine)
+            : "";
+    }
+}
+
+public class TypeMapper
+{
+    private const string ExternalTypeNameAttributeName = @"http://schemas.microsoft.com/ado/2006/04/codegeneration:ExternalTypeName";
+
+    private readonly System.Collections.IList _errors;
+    private readonly CodeGenerationTools _code;
+    private readonly MetadataTools _ef;
+
+    public TypeMapper(CodeGenerationTools code, MetadataTools ef, System.Collections.IList errors)
+    {
+        ArgumentNotNull(code, "code");
+        ArgumentNotNull(ef, "ef");
+        ArgumentNotNull(errors, "errors");
+
+        _code = code;
+        _ef = ef;
+        _errors = errors;
+    }
+
+    public static string FixNamespaces(string typeName)
+    {
+        return typeName.Replace("System.Data.Spatial.", "System.Data.Entity.Spatial.");
+    }
+
+    public string GetTypeName(TypeUsage typeUsage)
+    {
+        return typeUsage == null ? null : GetTypeName(typeUsage.EdmType, _ef.IsNullable(typeUsage), modelNamespace: null);
+    }
+
+    public string GetTypeName(EdmType edmType)
+    {
+        return GetTypeName(edmType, isNullable: null, modelNamespace: null);
+    }
+
+    public string GetTypeName(TypeUsage typeUsage, string modelNamespace)
+    {
+        return typeUsage == null ? null : GetTypeName(typeUsage.EdmType, _ef.IsNullable(typeUsage), modelNamespace);
+    }
+
+    public string GetTypeName(EdmType edmType, string modelNamespace)
+    {
+        return GetTypeName(edmType, isNullable: null, modelNamespace: modelNamespace);
+    }
+	public string GetCustomMeta(TypeUsage typeUsage, string name)
+    {
+		bool isCustom = false;
+		string result = string.Empty;
+		switch(typeUsage.EdmType.Name)
+		{
+			case "DateTime":
+				isCustom = true;
+				result += "	[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = Enums.FormatModel.FormatDateVN)]" + Environment.NewLine;
+				break;
+			case "Byte"://byte - tinyint
+				isCustom = true;
+				result += "	[RegularExpression(Enums.RegexDefine.Interger, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+				result += "	[DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = Enums.FormatModel.Integer)]" + Environment.NewLine;
+				result += "	[DataType(DataType.Text)]" + Environment.NewLine;
+				result += "	[Range(0, 255, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+				break;
+			case "Int16"://short-smalint
+				isCustom = true;
+				result += "	[RegularExpression(Enums.RegexDefine.IntergerAm, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+				result += "	[DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = Enums.FormatModel.Integer)]" + Environment.NewLine;
+				result += "	[DataType(DataType.Text)]" + Environment.NewLine;
+				result += "	[Range(-32767, 32767, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+				break;
+			case "Int32"://int
+				isCustom = true;
+				result += "	[RegularExpression(Enums.RegexDefine.IntergerAm, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+				result += "	[DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = Enums.FormatModel.Integer)]" + Environment.NewLine;
+				result += "	[DataType(DataType.Text)]" + Environment.NewLine;
+				result += "	[Range(-2147483648, 2147483647, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+				break;
+			case "Int64"://long-bigint
+				isCustom = true;
+				result += "	[RegularExpression(Enums.RegexDefine.IntergerAm, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+				result += "	[DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = Enums.FormatModel.Integer)]" + Environment.NewLine;
+				result += "	[DataType(DataType.Text)]" + Environment.NewLine;
+				result += "	[Range(-9223372036854775808 , 9223372036854775807, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+				break;
+			case "Double"://double-float
+				isCustom = true;
+				result += "	[RegularExpression(Enums.RegexDefine.NumericAm, ErrorMessage = Enums.RegexMessage.Numeric)]" + Environment.NewLine;
+				result += "	[DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = Enums.FormatModel.Number)]" + Environment.NewLine;
+				result += "	[DataType(DataType.Text)]" + Environment.NewLine;
+				result += "	//[Range(±5.0 × 10^−324 , ±1.7 × 10^308, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+				break;
+			case "Decimal"://decimal
+				isCustom = true;
+				result += "	[RegularExpression(Enums.RegexDefine.NumericAm, ErrorMessage = Enums.RegexMessage.Numeric)]" + Environment.NewLine;
+				result += "	[DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = Enums.FormatModel.Number)]" + Environment.NewLine;
+				result += "	[DataType(DataType.Text)]" + Environment.NewLine;
+				result += "	//[Range(-7.9 x 10^28 , 7.9 x 10^28, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+				break;
+			default:
+				break;
+		}
+		if(!isCustom)
+		{
+			result = "";
+        }
+		return result;
+    }
+	public string GetCustomType(TypeUsage typeUsage, string name, bool isRequired, bool hasNumber = false)
+    {
+		string result = string.Empty;
+		bool isCustom = false;
+		string format = Environment.NewLine + "	[Display(Name = \"{0}\")]" + Environment.NewLine;
+
+		if(!IsNullable(typeUsage))//Not Null
+        {
+			if(isRequired)
+				format += "	[Required(ErrorMessage = Enums.ErrorMessage.Required)]" + Environment.NewLine;
+			switch(typeUsage.EdmType.Name)
+			{
+				case "DateTime":
+					isCustom = true;
+					format += "	[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = Enums.FormatModel.FormatDateVN)]" + Environment.NewLine;
+					format += "	[DataType(DataType.Date)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = Validate.ConvertDateVN(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0} == DateTime.MinValue ? string.Empty : _entity.{0}.ToString(Enums.FormatType.FormatDateVN); }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Byte"://byte - tinyint
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.Interger, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+					format += "	[Range(0, 255, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = Validate.ConvertByte(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0} == 0? string.Empty : _entity.{0}.ToString(); }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Int16"://short-smalint
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.IntergerAm, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+					format += "	[Range(-32767, 32767, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = Validate.ConvertShort(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0} == 0? string.Empty : _entity.{0}.ToString(); }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Int32"://int
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.IntergerAm, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+					format += "	[Range(-2147483648, 2147483647, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = Validate.ConvertInt(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0} == 0? string.Empty : _entity.{0}.ToString(); }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Int64"://long-bigint
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.IntergerAm, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+					format += "	[Range(-9223372036854775808 , 9223372036854775807, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = Validate.ConvertLong(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0} == 0? string.Empty : _entity.{0}.ToString(); }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Double"://double-float
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.NumericAm, ErrorMessage = Enums.RegexMessage.Numeric)]" + Environment.NewLine;
+					format += "	//[Range(±5.0 × 10^−324 , ±1.7 × 10^308, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = Validate.ConvertDouble(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0} == 0? string.Empty : _entity.{0}.ToString(); }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Decimal"://decimal
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.NumericAm, ErrorMessage = Enums.RegexMessage.Numeric)]" + Environment.NewLine;
+					format += "	//[Range(-7.9 x 10^28 , 7.9 x 10^28, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = Validate.ConvertDecimal(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0} == 0? string.Empty : _entity.{0}.ToString(); }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				default:
+					break;
+			}
+        }
+		else//alowNULl
+		{
+			switch(typeUsage.EdmType.Name)
+			{
+				case "DateTime":
+					isCustom = true;
+					format += "	[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = Enums.FormatModel.FormatDateVN)]" + Environment.NewLine;
+					format += "	[DataType(DataType.Date)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = string.IsNullOrWhiteSpace(value)? null : Validate.ConvertDateVNAlowNull(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0}.HasValue? _entity.{0}.Value.ToString(Enums.FormatType.FormatDateVN) : string.Empty; }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Byte"://byte - tinyint
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.Interger, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+					format += "	[Range(0, 255, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = string.IsNullOrWhiteSpace(value)? null : Validate.ConvertByteAlowNull(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0}.HasValue? _entity.{0}.Value.ToString() : string.Empty; }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Int16"://short-smalint
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.IntergerAm, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+					format += "	//[Range(-32767, 32767, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = string.IsNullOrWhiteSpace(value)? null : Validate.ConvertShortAlowNull(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0}.HasValue? _entity.{0}.Value.ToString() : string.Empty; }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Int32"://int
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.IntergerAm, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+					format += "	[Range(-2147483648, 2147483647, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = string.IsNullOrWhiteSpace(value)? null : Validate.ConvertIntAlowNull(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0}.HasValue? _entity.{0}.Value.ToString() : string.Empty; }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Int64"://long-bigint
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.IntergerAm, ErrorMessage = Enums.RegexMessage.Interger)]" + Environment.NewLine;
+					format += "	[Range(-9223372036854775808 , 9223372036854775807, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = string.IsNullOrWhiteSpace(value)? null : Validate.ConvertLongAlowNull(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0}.HasValue? _entity.{0}.Value.ToString() : string.Empty; }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Double"://double-float
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.NumericAm, ErrorMessage = Enums.RegexMessage.Numeric)]" + Environment.NewLine;
+					format += "	//[Range(±5.0 × 10^−324 , ±1.7 × 10^308, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = string.IsNullOrWhiteSpace(value)? null : Validate.ConvertDoubleAlowNull(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0}.HasValue? _entity.{0}.Value.ToString() : string.Empty; }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				case "Decimal"://decimal
+					isCustom = true && hasNumber;
+					format += "	[RegularExpression(Enums.RegexDefine.NumericAm, ErrorMessage = Enums.RegexMessage.Numeric)]" + Environment.NewLine;
+					format += "	//[Range(-7.9 x 10^28 , 7.9 x 10^28, ErrorMessage = Enums.ErrorMessage.RangeMinMax)]" + Environment.NewLine;
+					format += "	public string _{0}" + Environment.NewLine;
+					format += "	{{" + Environment.NewLine;
+					format += "		set {{ _entity.{0} = string.IsNullOrWhiteSpace(value)? null : Validate.ConvertDecimalAlowNull(value); }}" + Environment.NewLine;
+					format += "		get {{ return _entity.{0}.HasValue? _entity.{0}.Value.ToString() : string.Empty; }}" + Environment.NewLine;
+					format += "	}}";
+					break;
+				default:
+					break;
+			}
+        }
+		if(isCustom)
+		{
+			result = string.Format(CultureInfo.InvariantCulture, format, name);
+        }
+		return result;
+    }
+
+	public bool IsNullable(TypeUsage typeUsage)
+    {
+		return _ef.IsNullable(typeUsage);
+    }
+
+    public string GetTypeName(EdmType edmType, bool? isNullable, string modelNamespace)
+    {
+        if (edmType == null)
+        {
+            return null;
+        }
+
+        var collectionType = edmType as CollectionType;
+        if (collectionType != null)
+        {
+            return String.Format(CultureInfo.InvariantCulture, "ICollection<{0}>", GetTypeName(collectionType.TypeUsage, modelNamespace));
+        }
+
+        var typeName = _code.Escape(edmType.MetadataProperties
+                                .Where(p => p.Name == ExternalTypeNameAttributeName)
+                                .Select(p => (string)p.Value)
+                                .FirstOrDefault())
+            ?? (modelNamespace != null && edmType.NamespaceName != modelNamespace ?
+                _code.CreateFullName(_code.EscapeNamespace(edmType.NamespaceName), _code.Escape(edmType)) :
+                _code.Escape(edmType));
+
+        if (edmType is StructuralType)
+        {
+            return typeName;
+        }
+
+        if (edmType is SimpleType)
+        {
+            var clrType = UnderlyingClrType(edmType);
+            if (!IsEnumType(edmType))
+            {
+                typeName = _code.Escape(clrType);
+            }
+
+            typeName = FixNamespaces(typeName);
+
+            return clrType.IsValueType && isNullable == true ?
+                String.Format(CultureInfo.InvariantCulture, "Nullable<{0}>", typeName) :
+                typeName;
+        }
+
+        throw new ArgumentException("edmType");
+    }
+    
+    public Type UnderlyingClrType(EdmType edmType)
+    {
+        ArgumentNotNull(edmType, "edmType");
+
+        var primitiveType = edmType as PrimitiveType;
+        if (primitiveType != null)
+        {
+            return primitiveType.ClrEquivalentType;
+        }
+
+        if (IsEnumType(edmType))
+        {
+            return GetEnumUnderlyingType(edmType).ClrEquivalentType;
+        }
+
+        return typeof(object);
+    }
+    
+    public object GetEnumMemberValue(MetadataItem enumMember)
+    {
+        ArgumentNotNull(enumMember, "enumMember");
+        
+        var valueProperty = enumMember.GetType().GetProperty("Value");
+        return valueProperty == null ? null : valueProperty.GetValue(enumMember, null);
+    }
+    
+    public string GetEnumMemberName(MetadataItem enumMember)
+    {
+        ArgumentNotNull(enumMember, "enumMember");
+        
+        var nameProperty = enumMember.GetType().GetProperty("Name");
+        return nameProperty == null ? null : (string)nameProperty.GetValue(enumMember, null);
+    }
+
+    public System.Collections.IEnumerable GetEnumMembers(EdmType enumType)
+    {
+        ArgumentNotNull(enumType, "enumType");
+
+        var membersProperty = enumType.GetType().GetProperty("Members");
+        return membersProperty != null 
+            ? (System.Collections.IEnumerable)membersProperty.GetValue(enumType, null)
+            : Enumerable.Empty<MetadataItem>();
+    }
+    
+    public bool EnumIsFlags(EdmType enumType)
+    {
+        ArgumentNotNull(enumType, "enumType");
+        
+        var isFlagsProperty = enumType.GetType().GetProperty("IsFlags");
+        return isFlagsProperty != null && (bool)isFlagsProperty.GetValue(enumType, null);
+    }
+
+    public bool IsEnumType(GlobalItem edmType)
+    {
+        ArgumentNotNull(edmType, "edmType");
+
+        return edmType.GetType().Name == "EnumType";
+    }
+
+    public PrimitiveType GetEnumUnderlyingType(EdmType enumType)
+    {
+        ArgumentNotNull(enumType, "enumType");
+
+        return (PrimitiveType)enumType.GetType().GetProperty("UnderlyingType").GetValue(enumType, null);
+    }
+
+    public string CreateLiteral(object value)
+    {
+        if (value == null || value.GetType() != typeof(TimeSpan))
+        {
+            return _code.CreateLiteral(value);
+        }
+
+        return string.Format(CultureInfo.InvariantCulture, "new TimeSpan({0})", ((TimeSpan)value).Ticks);
+    }
+    
+    public bool VerifyCaseInsensitiveTypeUniqueness(IEnumerable<string> types, string sourceFile)
+    {
+        ArgumentNotNull(types, "types");
+        ArgumentNotNull(sourceFile, "sourceFile");
+        
+        var hash = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+        if (types.Any(item => !hash.Add(item)))
+        {
+            _errors.Add(
+                new CompilerError(sourceFile, -1, -1, "6023",
+                    String.Format(CultureInfo.CurrentCulture, CodeGenerationTools.GetResourceString("Template_CaseInsensitiveTypeConflict"))));
+            return false;
+        }
+        return true;
+    }
+    
+    public IEnumerable<SimpleType> GetEnumItemsToGenerate(IEnumerable<GlobalItem> itemCollection)
+    {
+        return GetItemsToGenerate<SimpleType>(itemCollection)
+            .Where(e => IsEnumType(e));
+    }
+    
+    public IEnumerable<T> GetItemsToGenerate<T>(IEnumerable<GlobalItem> itemCollection) where T: EdmType
+    {
+        return itemCollection
+            .OfType<T>()
+            .Where(i => !i.MetadataProperties.Any(p => p.Name == ExternalTypeNameAttributeName))
+            .OrderBy(i => i.Name);
+    }
+
+    public IEnumerable<string> GetAllGlobalItems(IEnumerable<GlobalItem> itemCollection)
+    {
+        return itemCollection
+            .Where(i => i is EntityType || i is ComplexType || i is EntityContainer || IsEnumType(i))
+            .Select(g => GetGlobalItemName(g));
+    }
+
+    public string GetGlobalItemName(GlobalItem item)
+    {
+        if (item is EdmType)
+        {
+            return ((EdmType)item).Name;
+        }
+        else
+        {
+            return ((EntityContainer)item).Name;
+        }
+    }
+
+    public IEnumerable<EdmProperty> GetSimpleProperties(EntityType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == type);
+    }
+    
+    public IEnumerable<EdmProperty> GetSimpleProperties(ComplexType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == type);
+    }
+    
+    public IEnumerable<EdmProperty> GetComplexProperties(EntityType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is ComplexType && p.DeclaringType == type);
+    }
+    
+    public IEnumerable<EdmProperty> GetComplexProperties(ComplexType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is ComplexType && p.DeclaringType == type);
+    }
+
+    public IEnumerable<EdmProperty> GetPropertiesWithDefaultValues(EntityType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == type && p.DefaultValue != null);
+    }
+    
+    public IEnumerable<EdmProperty> GetPropertiesWithDefaultValues(ComplexType type)
+    {
+        return type.Properties.Where(p => p.TypeUsage.EdmType is SimpleType && p.DeclaringType == type && p.DefaultValue != null);
+    }
+
+    public IEnumerable<NavigationProperty> GetNavigationProperties(EntityType type)
+    {
+        return type.NavigationProperties.Where(np => np.DeclaringType == type);
+    }
+    
+    public IEnumerable<NavigationProperty> GetCollectionNavigationProperties(EntityType type)
+    {
+        return type.NavigationProperties.Where(np => np.DeclaringType == type && np.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many);
+    }
+    
+    public FunctionParameter GetReturnParameter(EdmFunction edmFunction)
+    {
+        ArgumentNotNull(edmFunction, "edmFunction");
+
+        var returnParamsProperty = edmFunction.GetType().GetProperty("ReturnParameters");
+        return returnParamsProperty == null
+            ? edmFunction.ReturnParameter
+            : ((IEnumerable<FunctionParameter>)returnParamsProperty.GetValue(edmFunction, null)).FirstOrDefault();
+    }
+
+    public bool IsComposable(EdmFunction edmFunction)
+    {
+        ArgumentNotNull(edmFunction, "edmFunction");
+
+        var isComposableProperty = edmFunction.GetType().GetProperty("IsComposableAttribute");
+        return isComposableProperty != null && (bool)isComposableProperty.GetValue(edmFunction, null);
+    }
+
+    public IEnumerable<FunctionImportParameter> GetParameters(EdmFunction edmFunction)
+    {
+        return FunctionImportParameter.Create(edmFunction.Parameters, _code, _ef);
+    }
+
+    public TypeUsage GetReturnType(EdmFunction edmFunction)
+    {
+        var returnParam = GetReturnParameter(edmFunction);
+        return returnParam == null ? null : _ef.GetElementType(returnParam.TypeUsage);
+    }
+    
+    public bool GenerateMergeOptionFunction(EdmFunction edmFunction, bool includeMergeOption)
+    {
+        var returnType = GetReturnType(edmFunction);
+        return !includeMergeOption && returnType != null && returnType.EdmType.BuiltInTypeKind == BuiltInTypeKind.EntityType;
+    }
+}
+
+public static void ArgumentNotNull<T>(T arg, string name) where T : class
+{
+    if (arg == null)
+    {
+        throw new ArgumentNullException(name);
+    }
+}
+#>

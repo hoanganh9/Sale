@@ -67,6 +67,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\ICacheService.cs" />
     <Compile Include="DataContext\IDataContext.cs" />
     <Compile Include="DataContext\IDataContextAsync.cs" />
     <Compile Include="Infrastructure\EntityModel.cs" />

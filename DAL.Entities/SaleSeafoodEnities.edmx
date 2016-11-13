@@ -1,0 +1,1116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="SaleSeafoodModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AspNetRoles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Discriminator" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Level" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="CreateBy" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ModifyDate" Type="datetime" />
+          <Property Name="ModifyBy" Type="nvarchar" MaxLength="128" />
+        </EntityType>
+        <EntityType Name="AspNetUserClaims">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ClaimType" Type="nvarchar(max)" />
+          <Property Name="ClaimValue" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="AspNetUserInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="DislayName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Level" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="CreateBy" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="ModifyDate" Type="datetime" />
+          <Property Name="ModifyBy" Type="varchar" MaxLength="128" />
+        </EntityType>
+        <EntityType Name="AspNetUserLogins">
+          <Key>
+            <PropertyRef Name="LoginProvider" />
+            <PropertyRef Name="ProviderKey" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="LoginProvider" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ProviderKey" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUserRoles">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" />
+          <Property Name="EmailConfirmed" Type="bit" Nullable="false" />
+          <Property Name="PasswordHash" Type="nvarchar(max)" />
+          <Property Name="SecurityStamp" Type="nvarchar(max)" />
+          <Property Name="PhoneNumber" Type="nvarchar(max)" />
+          <Property Name="PhoneNumberConfirmed" Type="bit" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="bit" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="datetime" />
+          <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SI_Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="tinyint" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="256" />
+        </EntityType>
+        <EntityType Name="SI_CategoryDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="CategoryId" />
+          </Key>
+          <Property Name="Id" Type="tinyint" Nullable="false" />
+          <Property Name="CategoryId" Type="tinyint" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="256" />
+        </EntityType>
+        <EntityType Name="SysAction">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Controller" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Action" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Area" Type="varchar" MaxLength="20" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+          <Property Name="Params" Type="varchar" MaxLength="500" />
+          <Property Name="IsMenu" Type="bit" />
+          <Property Name="Component" Type="varchar" MaxLength="50" />
+          <Property Name="Icon" Type="varchar" MaxLength="200" />
+          <Property Name="ControllerDesc" Type="nvarchar" MaxLength="200" />
+          <Property Name="ComponentDesc" Type="nvarchar" MaxLength="200" />
+          <Property Name="AreaDesc" Type="nvarchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="SysConfig">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Value" Type="nvarchar" MaxLength="500" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="SysGenCode">
+          <Key>
+            <PropertyRef Name="TableName" />
+          </Key>
+          <Property Name="TableName" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Prefix" Type="varchar" MaxLength="10" />
+          <Property Name="CurentDate" Type="date" />
+          <Property Name="FormatDate" Type="varchar" MaxLength="10" />
+          <Property Name="Length" Type="int" Nullable="false" />
+          <Property Name="CurentIndex" Type="int" Nullable="false" />
+          <Property Name="CurentAlphabet" Type="varchar" MaxLength="10" />
+          <Property Name="UsingAlphabet" Type="bit" Nullable="false" />
+          <Property Name="TypeReset" Type="varchar" MaxLength="4" />
+          <Property Name="FormatCode" Type="varchar" MaxLength="500" />
+          <Property Name="FormatKey" Type="varchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="SysGroupAction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+          <Property Name="Level" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="CreateBy" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="ModifyDate" Type="datetime" />
+          <Property Name="ModifyBy" Type="varchar" MaxLength="128" />
+        </EntityType>
+        <EntityType Name="SysGroupActionDetail">
+          <Key>
+            <PropertyRef Name="GroupActionId" />
+            <PropertyRef Name="ActionCode" />
+          </Key>
+          <Property Name="GroupActionId" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="ActionCode" Type="varchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'SaleSeafood.dbo.SysLog' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="SysLog">
+          <Key>
+            <PropertyRef Name="LogId" />
+            <PropertyRef Name="UserChange" />
+            <PropertyRef Name="DateChange" />
+            <PropertyRef Name="ChangeInfo" />
+          </Key>
+          <Property Name="LogId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="UserChange" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="DateChange" Type="datetime" Nullable="false" />
+          <Property Name="ChangeInfo" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="LogInfo" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="SysMenu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ActionCode" Type="varchar" MaxLength="200" />
+          <Property Name="Area" Type="nvarchar" MaxLength="20" />
+          <Property Name="Controller" Type="nvarchar" MaxLength="50" />
+          <Property Name="Action" Type="nvarchar" MaxLength="50" />
+          <Property Name="Params" Type="nvarchar" MaxLength="500" />
+          <Property Name="Pram1" Type="nvarchar" MaxLength="50" />
+          <Property Name="Pram2" Type="nvarchar" MaxLength="50" />
+          <Property Name="Pram3" Type="nvarchar" MaxLength="50" />
+          <Property Name="QuerryString" Type="nvarchar" MaxLength="200" />
+          <Property Name="Url" Type="nvarchar" MaxLength="500" />
+          <Property Name="ParentId" Type="varchar" MaxLength="128" />
+          <Property Name="Order" Type="int" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+          <Property Name="MenuType" Type="int" />
+          <Property Name="Icon" Type="nvarchar" MaxLength="200" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="CreateBy" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ModifyDate" Type="datetime" />
+          <Property Name="ModifyBy" Type="nvarchar" MaxLength="128" />
+        </EntityType>
+        <EntityType Name="SysRoleActions">
+          <Key>
+            <PropertyRef Name="RoleId" />
+            <PropertyRef Name="ActionCode" />
+          </Key>
+          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ActionCode" Type="varchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SysRoleGroupAction">
+          <Key>
+            <PropertyRef Name="RoleId" />
+            <PropertyRef Name="GroupActionId" />
+          </Key>
+          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="GroupActionId" Type="varchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'SaleSeafood.dbo.V_UserInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="V_UserInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="DislayName" />
+            <PropertyRef Name="Status" />
+            <PropertyRef Name="Level" />
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="DislayName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="Level" Type="int" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" />
+          <Property Name="PhoneNumber" Type="nvarchar(max)" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserClaims">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserLogins">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRoles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserRoles">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserRoles">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SI_CategoryDetail_SI_Category">
+          <End Role="SI_Category" Type="Self.SI_Category" Multiplicity="1" />
+          <End Role="SI_CategoryDetail" Type="Self.SI_CategoryDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SI_Category">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SI_CategoryDetail">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysGroupActionDetail_SysAction">
+          <End Role="SysAction" Type="Self.SysAction" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SysGroupActionDetail" Type="Self.SysGroupActionDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SysAction">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="SysGroupActionDetail">
+              <PropertyRef Name="ActionCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysGroupActionDetail_SysGroupAction">
+          <End Role="SysGroupAction" Type="Self.SysGroupAction" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SysGroupActionDetail" Type="Self.SysGroupActionDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SysGroupAction">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SysGroupActionDetail">
+              <PropertyRef Name="GroupActionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysMenu_SysAction">
+          <End Role="SysAction" Type="Self.SysAction" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SysMenu" Type="Self.SysMenu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SysAction">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="SysMenu">
+              <PropertyRef Name="ActionCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysMenu_SysMenu">
+          <End Role="SysMenu" Type="Self.SysMenu" Multiplicity="0..1" />
+          <End Role="SysMenu1" Type="Self.SysMenu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SysMenu">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SysMenu1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysRoleActions_AspNetRoles">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SysRoleActions" Type="Self.SysRoleActions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRoles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SysRoleActions">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysRoleActions_SysAction">
+          <End Role="SysAction" Type="Self.SysAction" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SysRoleActions" Type="Self.SysRoleActions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SysAction">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="SysRoleActions">
+              <PropertyRef Name="ActionCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysRoleGroupAction_AspNetRoles">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SysRoleGroupAction" Type="Self.SysRoleGroupAction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRoles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SysRoleGroupAction">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysRoleGroupAction_SysGroupAction">
+          <End Role="SysGroupAction" Type="Self.SysGroupAction" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SysRoleGroupAction" Type="Self.SysRoleGroupAction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SysGroupAction">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SysRoleGroupAction">
+              <PropertyRef Name="GroupActionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SaleSeafoodModelStoreContainer">
+          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserInfo" EntityType="Self.AspNetUserInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SI_Category" EntityType="Self.SI_Category" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SI_CategoryDetail" EntityType="Self.SI_CategoryDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysAction" EntityType="Self.SysAction" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysConfig" EntityType="Self.SysConfig" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysGenCode" EntityType="Self.SysGenCode" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysGroupAction" EntityType="Self.SysGroupAction" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysGroupActionDetail" EntityType="Self.SysGroupActionDetail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysMenu" EntityType="Self.SysMenu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysRoleActions" EntityType="Self.SysRoleActions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysRoleGroupAction" EntityType="Self.SysRoleGroupAction" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysLog" EntityType="Self.SysLog" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [SysLog].[LogId] AS [LogId], 
+    [SysLog].[UserChange] AS [UserChange], 
+    [SysLog].[DateChange] AS [DateChange], 
+    [SysLog].[ChangeInfo] AS [ChangeInfo], 
+    [SysLog].[LogInfo] AS [LogInfo]
+    FROM [dbo].[SysLog] AS [SysLog]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="V_UserInfo" EntityType="Self.V_UserInfo" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [V_UserInfo].[Id] AS [Id], 
+    [V_UserInfo].[DislayName] AS [DislayName], 
+    [V_UserInfo].[Status] AS [Status], 
+    [V_UserInfo].[Level] AS [Level], 
+    [V_UserInfo].[Email] AS [Email], 
+    [V_UserInfo].[PhoneNumber] AS [PhoneNumber], 
+    [V_UserInfo].[UserName] AS [UserName]
+    FROM [dbo].[V_UserInfo] AS [V_UserInfo]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SI_CategoryDetail_SI_Category" Association="Self.FK_SI_CategoryDetail_SI_Category">
+            <End Role="SI_Category" EntitySet="SI_Category" />
+            <End Role="SI_CategoryDetail" EntitySet="SI_CategoryDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysGroupActionDetail_SysAction" Association="Self.FK_SysGroupActionDetail_SysAction">
+            <End Role="SysAction" EntitySet="SysAction" />
+            <End Role="SysGroupActionDetail" EntitySet="SysGroupActionDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysGroupActionDetail_SysGroupAction" Association="Self.FK_SysGroupActionDetail_SysGroupAction">
+            <End Role="SysGroupAction" EntitySet="SysGroupAction" />
+            <End Role="SysGroupActionDetail" EntitySet="SysGroupActionDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysMenu_SysAction" Association="Self.FK_SysMenu_SysAction">
+            <End Role="SysAction" EntitySet="SysAction" />
+            <End Role="SysMenu" EntitySet="SysMenu" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysMenu_SysMenu" Association="Self.FK_SysMenu_SysMenu">
+            <End Role="SysMenu" EntitySet="SysMenu" />
+            <End Role="SysMenu1" EntitySet="SysMenu" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysRoleActions_AspNetRoles" Association="Self.FK_SysRoleActions_AspNetRoles">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="SysRoleActions" EntitySet="SysRoleActions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysRoleActions_SysAction" Association="Self.FK_SysRoleActions_SysAction">
+            <End Role="SysAction" EntitySet="SysAction" />
+            <End Role="SysRoleActions" EntitySet="SysRoleActions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysRoleGroupAction_AspNetRoles" Association="Self.FK_SysRoleGroupAction_AspNetRoles">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="SysRoleGroupAction" EntitySet="SysRoleGroupAction" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysRoleGroupAction_SysGroupAction" Association="Self.FK_SysRoleGroupAction_SysGroupAction">
+            <End Role="SysGroupAction" EntitySet="SysGroupAction" />
+            <End Role="SysRoleGroupAction" EntitySet="SysRoleGroupAction" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SaleSeafoodModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AspNetRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Discriminator" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Level" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreateBy" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ModifyDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifyBy" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="Self.AspNetUserRoles" FromRole="AspNetRoles" ToRole="AspNetUsers" />
+          <NavigationProperty Name="SysActions" Relationship="Self.SysRoleActions" FromRole="AspNetRoles" ToRole="SysAction" />
+          <NavigationProperty Name="SysGroupActions" Relationship="Self.SysRoleGroupAction" FromRole="AspNetRoles" ToRole="SysGroupAction" />
+        </EntityType>
+        <EntityType Name="AspNetUserClaim">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
+        </EntityType>
+        <EntityType Name="AspNetUserInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DislayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Level" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreateBy" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ModifyDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifyBy" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AspNetUserLogin">
+          <Key>
+            <PropertyRef Name="LoginProvider" />
+            <PropertyRef Name="ProviderKey" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="LoginProvider" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProviderKey" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogins" ToRole="AspNetUsers" />
+        </EntityType>
+        <EntityType Name="AspNetUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
+          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
+          <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
+          <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
+        </EntityType>
+        <EntityType Name="SI_Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Byte" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SI_CategoryDetail" Relationship="Self.FK_SI_CategoryDetail_SI_Category" FromRole="SI_Category" ToRole="SI_CategoryDetail" />
+        </EntityType>
+        <EntityType Name="SI_CategoryDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="CategoryId" />
+          </Key>
+          <Property Name="Id" Type="Byte" Nullable="false" />
+          <Property Name="CategoryId" Type="Byte" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SI_Category" Relationship="Self.FK_SI_CategoryDetail_SI_Category" FromRole="SI_CategoryDetail" ToRole="SI_Category" />
+        </EntityType>
+        <EntityType Name="SysAction">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Controller" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Action" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Area" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Params" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="IsMenu" Type="Boolean" />
+          <Property Name="Component" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Icon" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="ControllerDesc" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ComponentDesc" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="AreaDesc" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SysMenus" Relationship="Self.FK_SysMenu_SysAction" FromRole="SysAction" ToRole="SysMenu" />
+          <NavigationProperty Name="SysGroupActions" Relationship="Self.SysGroupActionDetail" FromRole="SysAction" ToRole="SysGroupAction" />
+          <NavigationProperty Name="AspNetRoles" Relationship="Self.SysRoleActions" FromRole="SysAction" ToRole="AspNetRoles" />
+        </EntityType>
+        <EntityType Name="SysConfig">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Value" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SysGenCode">
+          <Key>
+            <PropertyRef Name="TableName" />
+          </Key>
+          <Property Name="TableName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Prefix" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CurentDate" Type="DateTime" Precision="0" />
+          <Property Name="FormatDate" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Length" Type="Int32" Nullable="false" />
+          <Property Name="CurentIndex" Type="Int32" Nullable="false" />
+          <Property Name="CurentAlphabet" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="UsingAlphabet" Type="Boolean" Nullable="false" />
+          <Property Name="TypeReset" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Name="FormatCode" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="FormatKey" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SysGroupAction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Level" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreateBy" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ModifyDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifyBy" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="SysActions" Relationship="Self.SysGroupActionDetail" FromRole="SysGroupAction" ToRole="SysAction" />
+          <NavigationProperty Name="AspNetRoles" Relationship="Self.SysRoleGroupAction" FromRole="SysGroupAction" ToRole="AspNetRoles" />
+        </EntityType>
+        <EntityType Name="SysMenu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ActionCode" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Area" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Controller" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Action" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Params" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Pram1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Pram2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Pram3" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="QuerryString" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Url" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ParentId" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="MenuType" Type="Int32" />
+          <Property Name="Icon" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreateBy" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ModifyDate" Type="DateTime" Precision="3" />
+          <Property Name="ModifyBy" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SysAction" Relationship="Self.FK_SysMenu_SysAction" FromRole="SysMenu" ToRole="SysAction" />
+          <NavigationProperty Name="SysMenu1" Relationship="Self.FK_SysMenu_SysMenu" FromRole="SysMenu" ToRole="SysMenu1" />
+          <NavigationProperty Name="SysMenu2" Relationship="Self.FK_SysMenu_SysMenu" FromRole="SysMenu1" ToRole="SysMenu" />
+        </EntityType>
+        <EntityType Name="SysLog">
+          <Key>
+            <PropertyRef Name="LogId" />
+            <PropertyRef Name="UserChange" />
+            <PropertyRef Name="DateChange" />
+            <PropertyRef Name="ChangeInfo" />
+          </Key>
+          <Property Name="LogId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserChange" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateChange" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ChangeInfo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LogInfo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="V_UserInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="DislayName" />
+            <PropertyRef Name="Status" />
+            <PropertyRef Name="Level" />
+            <PropertyRef Name="UserName" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DislayName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="Level" Type="Int32" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaim" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserClaims">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserLogins">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SI_CategoryDetail_SI_Category">
+          <End Role="SI_Category" Type="Self.SI_Category" Multiplicity="1" />
+          <End Role="SI_CategoryDetail" Type="Self.SI_CategoryDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SI_Category">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SI_CategoryDetail">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysMenu_SysAction">
+          <End Role="SysAction" Type="Self.SysAction" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SysMenu" Type="Self.SysMenu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SysAction">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="SysMenu">
+              <PropertyRef Name="ActionCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SysMenu_SysMenu">
+          <End Role="SysMenu" Type="Self.SysMenu" Multiplicity="0..1" />
+          <End Role="SysMenu1" Type="Self.SysMenu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SysMenu">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SysMenu1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AspNetUserRoles">
+          <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
+          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
+        </Association>
+        <Association Name="SysGroupActionDetail">
+          <End Role="SysAction" Type="Self.SysAction" Multiplicity="*" />
+          <End Role="SysGroupAction" Type="Self.SysGroupAction" Multiplicity="*" />
+        </Association>
+        <Association Name="SysRoleActions">
+          <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
+          <End Role="SysAction" Type="Self.SysAction" Multiplicity="*" />
+        </Association>
+        <Association Name="SysRoleGroupAction">
+          <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
+          <End Role="SysGroupAction" Type="Self.SysGroupAction" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="SaleSeafoodEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRole" />
+          <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaim" />
+          <EntitySet Name="AspNetUserInfoes" EntityType="Self.AspNetUserInfo" />
+          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogin" />
+          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
+          <EntitySet Name="SI_Category" EntityType="Self.SI_Category" />
+          <EntitySet Name="SI_CategoryDetail" EntityType="Self.SI_CategoryDetail" />
+          <EntitySet Name="SysActions" EntityType="Self.SysAction" />
+          <EntitySet Name="SysConfigs" EntityType="Self.SysConfig" />
+          <EntitySet Name="SysGenCodes" EntityType="Self.SysGenCode" />
+          <EntitySet Name="SysGroupActions" EntityType="Self.SysGroupAction" />
+          <EntitySet Name="SysMenus" EntityType="Self.SysMenu" />
+          <EntitySet Name="SysLogs" EntityType="Self.SysLog" />
+          <EntitySet Name="V_UserInfo" EntityType="Self.V_UserInfo" />
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SI_CategoryDetail_SI_Category" Association="Self.FK_SI_CategoryDetail_SI_Category">
+            <End Role="SI_Category" EntitySet="SI_Category" />
+            <End Role="SI_CategoryDetail" EntitySet="SI_CategoryDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysMenu_SysAction" Association="Self.FK_SysMenu_SysAction">
+            <End Role="SysAction" EntitySet="SysActions" />
+            <End Role="SysMenu" EntitySet="SysMenus" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SysMenu_SysMenu" Association="Self.FK_SysMenu_SysMenu">
+            <End Role="SysMenu" EntitySet="SysMenus" />
+            <End Role="SysMenu1" EntitySet="SysMenus" />
+          </AssociationSet>
+          <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+          </AssociationSet>
+          <AssociationSet Name="SysGroupActionDetail" Association="Self.SysGroupActionDetail">
+            <End Role="SysAction" EntitySet="SysActions" />
+            <End Role="SysGroupAction" EntitySet="SysGroupActions" />
+          </AssociationSet>
+          <AssociationSet Name="SysRoleActions" Association="Self.SysRoleActions">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="SysAction" EntitySet="SysActions" />
+          </AssociationSet>
+          <AssociationSet Name="SysRoleGroupAction" Association="Self.SysRoleGroupAction">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="SysGroupAction" EntitySet="SysGroupActions" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SaleSeafoodModelStoreContainer" CdmEntityContainer="SaleSeafoodEntities">
+          <EntitySetMapping Name="AspNetRoles">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.AspNetRole">
+              <MappingFragment StoreEntitySet="AspNetRoles">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Discriminator" ColumnName="Discriminator" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
+                <ScalarProperty Name="ModifyDate" ColumnName="ModifyDate" />
+                <ScalarProperty Name="ModifyBy" ColumnName="ModifyBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserClaims">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.AspNetUserClaim">
+              <MappingFragment StoreEntitySet="AspNetUserClaims">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
+                <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserInfoes">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.AspNetUserInfo">
+              <MappingFragment StoreEntitySet="AspNetUserInfo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DislayName" ColumnName="DislayName" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
+                <ScalarProperty Name="ModifyDate" ColumnName="ModifyDate" />
+                <ScalarProperty Name="ModifyBy" ColumnName="ModifyBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserLogins">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.AspNetUserLogin">
+              <MappingFragment StoreEntitySet="AspNetUserLogins">
+                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
+                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUsers">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.AspNetUser">
+              <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SI_Category">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.SI_Category">
+              <MappingFragment StoreEntitySet="SI_Category">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SI_CategoryDetail">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.SI_CategoryDetail">
+              <MappingFragment StoreEntitySet="SI_CategoryDetail">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SysActions">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.SysAction">
+              <MappingFragment StoreEntitySet="SysAction">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Controller" ColumnName="Controller" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="Area" ColumnName="Area" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Params" ColumnName="Params" />
+                <ScalarProperty Name="IsMenu" ColumnName="IsMenu" />
+                <ScalarProperty Name="Component" ColumnName="Component" />
+                <ScalarProperty Name="Icon" ColumnName="Icon" />
+                <ScalarProperty Name="ControllerDesc" ColumnName="ControllerDesc" />
+                <ScalarProperty Name="ComponentDesc" ColumnName="ComponentDesc" />
+                <ScalarProperty Name="AreaDesc" ColumnName="AreaDesc" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SysConfigs">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.SysConfig">
+              <MappingFragment StoreEntitySet="SysConfig">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SysGenCodes">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.SysGenCode">
+              <MappingFragment StoreEntitySet="SysGenCode">
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="Prefix" ColumnName="Prefix" />
+                <ScalarProperty Name="CurentDate" ColumnName="CurentDate" />
+                <ScalarProperty Name="FormatDate" ColumnName="FormatDate" />
+                <ScalarProperty Name="Length" ColumnName="Length" />
+                <ScalarProperty Name="CurentIndex" ColumnName="CurentIndex" />
+                <ScalarProperty Name="CurentAlphabet" ColumnName="CurentAlphabet" />
+                <ScalarProperty Name="UsingAlphabet" ColumnName="UsingAlphabet" />
+                <ScalarProperty Name="TypeReset" ColumnName="TypeReset" />
+                <ScalarProperty Name="FormatCode" ColumnName="FormatCode" />
+                <ScalarProperty Name="FormatKey" ColumnName="FormatKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SysGroupActions">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.SysGroupAction">
+              <MappingFragment StoreEntitySet="SysGroupAction">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
+                <ScalarProperty Name="ModifyDate" ColumnName="ModifyDate" />
+                <ScalarProperty Name="ModifyBy" ColumnName="ModifyBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SysMenus">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.SysMenu">
+              <MappingFragment StoreEntitySet="SysMenu">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ActionCode" ColumnName="ActionCode" />
+                <ScalarProperty Name="Area" ColumnName="Area" />
+                <ScalarProperty Name="Controller" ColumnName="Controller" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="Params" ColumnName="Params" />
+                <ScalarProperty Name="Pram1" ColumnName="Pram1" />
+                <ScalarProperty Name="Pram2" ColumnName="Pram2" />
+                <ScalarProperty Name="Pram3" ColumnName="Pram3" />
+                <ScalarProperty Name="QuerryString" ColumnName="QuerryString" />
+                <ScalarProperty Name="Url" ColumnName="Url" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="MenuType" ColumnName="MenuType" />
+                <ScalarProperty Name="Icon" ColumnName="Icon" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
+                <ScalarProperty Name="ModifyDate" ColumnName="ModifyDate" />
+                <ScalarProperty Name="ModifyBy" ColumnName="ModifyBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SysLogs">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.SysLog">
+              <MappingFragment StoreEntitySet="SysLog">
+                <ScalarProperty Name="LogId" ColumnName="LogId" />
+                <ScalarProperty Name="UserChange" ColumnName="UserChange" />
+                <ScalarProperty Name="DateChange" ColumnName="DateChange" />
+                <ScalarProperty Name="ChangeInfo" ColumnName="ChangeInfo" />
+                <ScalarProperty Name="LogInfo" ColumnName="LogInfo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="V_UserInfo">
+            <EntityTypeMapping TypeName="SaleSeafoodModel.V_UserInfo">
+              <MappingFragment StoreEntitySet="V_UserInfo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DislayName" ColumnName="DislayName" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="AspNetUserRoles" TypeName="SaleSeafoodModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
+            <EndProperty Name="AspNetRoles">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
+            </EndProperty>
+            <EndProperty Name="AspNetUsers">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="SysGroupActionDetail" TypeName="SaleSeafoodModel.SysGroupActionDetail" StoreEntitySet="SysGroupActionDetail">
+            <EndProperty Name="SysAction">
+              <ScalarProperty Name="Code" ColumnName="ActionCode" />
+            </EndProperty>
+            <EndProperty Name="SysGroupAction">
+              <ScalarProperty Name="Id" ColumnName="GroupActionId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="SysRoleActions" TypeName="SaleSeafoodModel.SysRoleActions" StoreEntitySet="SysRoleActions">
+            <EndProperty Name="AspNetRoles">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
+            </EndProperty>
+            <EndProperty Name="SysAction">
+              <ScalarProperty Name="Code" ColumnName="ActionCode" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="SysRoleGroupAction" TypeName="SaleSeafoodModel.SysRoleGroupAction" StoreEntitySet="SysRoleGroupAction">
+            <EndProperty Name="AspNetRoles">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
+            </EndProperty>
+            <EndProperty Name="SysGroupAction">
+              <ScalarProperty Name="Id" ColumnName="GroupActionId" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
